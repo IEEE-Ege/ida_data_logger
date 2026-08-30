@@ -1,0 +1,46 @@
+# =============================================================================
+# logger_params.yaml — Veri Kaydı (Şartname Dosya 1/2/3)
+# =============================================================================
+# TÜM kayıtlar HARİCİ 64 GB SD KARTA yazılır (/mnt/sdcard/ida_logs). Sistem/kod
+# iç 16 GB depolamada çalışır; SD yalnızca büyük kayıt verisi içindir.
+# SD kart bağlı değilse entrypoint.sh iç diske (/ros2_ws/logs) düşer + uyarır.
+# =============================================================================
+
+# ── Dosya 1a: İşlenmiş kamera verisi (mp4, tespit çerçeveleri + sınıf) ────────
+video_logger:
+  ros__parameters:
+    log_dir: "/mnt/sdcard/ida_logs/video"
+    fps: 10.0
+    width: 640                       # yolo annotated (letterbox 640x640)
+    height: 640
+    annotated_topic: "/camera/image_annotated"
+    raw_topic: "/camera/image_processed"   # annotated yoksa yedek (BGR)
+
+# ── Dosya 1b: LiDAR verisi (mp4, kümeleme/tespit görünür) ────────────────────
+lidar_video_logger:
+  ros__parameters:
+    log_dir: "/mnt/sdcard/ida_logs/lidar"
+    fps: 5.0
+    size_px: 720
+    range_m: 35.0
+    point_topic: "/lidar/filtered"
+    buoy_topic: "/buoy_detections"
+
+# ── Dosya 2: Araç telemetrisi (csv) ──────────────────────────────────────────
+telemetry_logger:
+  ros__parameters:
+    log_dir: "/mnt/sdcard/ida_logs/telemetry"
+    rate_hz: 2.0
+    heading_setpoint_horizon_sec: 1.0
+    cmd_vel_topic: "/cmd_vel"
+
+# ── Dosya 3: Lokal harita / costmap / engel haritası (rosbag2, ≥1 Hz) ─────────
+costmap_logger:
+  ros__parameters:
+    log_dir: "/mnt/sdcard/ida_logs/bags"
+    # Nav2 Humble dağıtımına göre yayınlanan topic isimleri değişebilir.
+    # Tümünü kaydet — yayınlanmayanlar boş bag topic'i olarak kalır.
+    topics:
+      - "/local_costmap/costmap"
+      - "/local_costmap/costmap_raw"
+      - "/global_costmap/costmap"
